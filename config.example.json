@@ -1,0 +1,11 @@
+{
+  "displayName": "My authorized room",
+  "query": {
+    "feeitemid": null,
+    "type": "IEC",
+    "level": 3,
+    "xiaoqu_id": null,
+    "loudong_id": null,
+    "room_id": null
+  }
+}
