@@ -2,7 +2,9 @@
 $ErrorActionPreference='Stop'
 [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
 . (Join-Path $PSScriptRoot 'SchoolClient.ps1')
+. (Join-Path $PSScriptRoot 'Alerts.ps1')
 Initialize-PublicQuery
+Initialize-ReminderSettings
 function Add-BalanceHistory {
     param(
         [Parameter(Mandatory = $true)][double]$Balance,
@@ -720,7 +722,7 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
 
                 <StackPanel x:Name="StatusSection" Grid.Row="6" VerticalAlignment="Center">
                     <TextBlock x:Name="StatusText" Text="Starting..." Foreground="#8291A8" FontSize="10" TextAlignment="Center" TextWrapping="Wrap"/>
-                    <TextBlock Text="&#x6BCF; 1 &#x5206;&#x949F;&#x81EA;&#x52A8;&#x5237;&#x65B0; &#x00B7; &#x672C;&#x5730;&#x52A0;&#x5BC6;&#x8BB0;&#x5F55;" Foreground="#4F5E73" FontSize="9" TextAlignment="Center" Margin="0,3,0,0"/>
+                    <TextBlock x:Name="ReminderStatusText" Text="&#x4F4E;&#x7535;&#x91CF;&#x63D0;&#x9192;" Foreground="#8291A8" FontSize="9" TextAlignment="Center" TextWrapping="Wrap" Margin="0,3,0,0"/>
                 </StackPanel>
             </Grid>
             </ScrollViewer>
@@ -1711,7 +1713,10 @@ function Update-BalanceDisplay {
         $result=Get-DormBalance
         $value=[double]$result.Balance
         $script:LastBalance=$value
-        Add-BalanceHistory -Balance $value -Timestamp $result.Updated
+        Invoke-LowBalanceReminder -Balance $value
+        $historySaved=$true
+        try { Add-BalanceHistory -Balance $value -Timestamp $result.Updated }
+        catch { $historySaved=$false }
         Clear-ChartHistoryCache
         $balanceText.Text=('{0:N2}' -f $value)
         $color=if($value-lt 10){'#FB7185'}elseif($value-lt 20){'#FBBF24'}else{'#5EEAD4'}
@@ -1720,6 +1725,7 @@ function Update-BalanceDisplay {
         $compactStatusDot.Fill=$brushConverter.ConvertFromString('#5EEAD4')
         $statusText.Foreground=$brushConverter.ConvertFromString('#94A3B8')
         $statusText.Text=$(if($Demo){'DEMO - fictional data | '}else{''})+'Updated '+$result.Updated.ToString('HH:mm:ss')
+        if(-not $historySaved){$statusText.Text+=' | History save unavailable'}
         Set-ResponsiveLayout
         if(-not $script:IsCollapsed){Draw-BalanceChart}else{$script:ChartNeedsRender=$true}
         Update-BalanceStatistics -CurrentBalance $value
@@ -2254,6 +2260,8 @@ $window.Add_SizeChanged({
 $window.Add_Loaded({
     Set-PublicLabels
     if (-not $Demo -and -not $script:PublicConfigured) { [void](Show-QuerySettings); Set-PublicLabels }
+    if (-not $Demo) { try { Initialize-ReminderIcon } catch { } }
+    Update-ReminderSummary
     Initialize-ResponsiveMetrics
     Set-ResponsiveLayout
     Update-ResponsiveTypography
@@ -2263,6 +2271,7 @@ $window.Add_Loaded({
     $glassMotionTimer.Start()
 })
 $window.Add_Closed({
+    Close-ReminderIcon
     [Windows.Threading.Dispatcher]::CurrentDispatcher.InvokeShutdown()
 })
 $unhandledExceptionHandler = [Windows.Threading.DispatcherUnhandledExceptionEventHandler]{
@@ -2281,6 +2290,7 @@ try {
     [Windows.Threading.Dispatcher]::Run()
 }
 finally {
+    Close-ReminderIcon
     $timer.Stop()
     $visibilityTimer.Stop()
     $resizeDriver.Dispose()

@@ -1,4 +1,4 @@
-param([string]$Version='0.1.0')
+param([string]$Version='0.2.0')
 $ErrorActionPreference='Stop'
 if($Version-notmatch '^\d+\.\d+\.\d+$'){throw 'Use a semantic version such as 0.1.0.'}
 $root=Split-Path $PSScriptRoot
@@ -12,15 +12,19 @@ $exe=Join-Path $package 'NUIST-Electricity.exe'
 & $compiler /nologo /target:winexe /platform:x64 /optimize+ /debug- "/out:$exe" /reference:System.Windows.Forms.dll (Join-Path $root 'src\Launcher.cs')
 if($LASTEXITCODE-ne 0){throw 'Launcher compilation failed.'}
 [void][IO.Directory]::CreateDirectory((Join-Path $package 'src'))
-foreach($name in @('PowerBalance.ps1','PowerBalance.Motion.cs','SchoolClient.ps1')){
+foreach($name in @('PowerBalance.ps1','PowerBalance.Motion.cs','SchoolClient.ps1','Alerts.ps1')){
     Copy-Item -LiteralPath (Join-Path $root ('src\'+$name)) -Destination (Join-Path $package ('src\'+$name))
 }
-foreach($name in @('README.md','LICENSE','SECURITY.md','config.example.json')){
+foreach($name in @('README.md','LICENSE','SECURITY.md','CHANGELOG.md','config.example.json')){
     Copy-Item -LiteralPath (Join-Path $root $name) -Destination (Join-Path $package $name)
 }
 [void][IO.Directory]::CreateDirectory((Join-Path $package 'docs'))
 foreach($name in @('METHOD.md','PRIVACY.md')){
     Copy-Item -LiteralPath (Join-Path $root ('docs\'+$name)) -Destination (Join-Path $package ('docs\'+$name))
+}
+[void][IO.Directory]::CreateDirectory((Join-Path $package 'docs\images'))
+foreach($name in @('desktop-portrait.png','desktop-landscape.png','desktop-compact.png','reminder-settings.png')){
+    Copy-Item -LiteralPath (Join-Path $root ('docs\images\'+$name)) -Destination (Join-Path $package ('docs\images\'+$name))
 }
 Copy-Item -LiteralPath (Join-Path $root 'scripts\Demo.cmd') -Destination (Join-Path $package 'Demo.cmd')
 Add-Type -AssemblyName System.IO.Compression.FileSystem

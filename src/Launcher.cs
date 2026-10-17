@@ -9,8 +9,8 @@ using System.Windows.Forms;
 [assembly: AssemblyDescription("Unofficial NUIST electricity query desktop widget")]
 [assembly: AssemblyCompany("NUIST Electricity Query contributors")]
 [assembly: AssemblyProduct("NUIST Electricity Query")]
-[assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyVersion("0.2.0.0")]
+[assembly: AssemblyFileVersion("0.2.0.0")]
 
 internal static class Program
 {

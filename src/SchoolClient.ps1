@@ -1,4 +1,4 @@
-# Public client: only explicitly supplied credentials for the official host.
+﻿# Public client: only explicitly supplied credentials for the official host.
 Add-Type -AssemblyName System.Security
 $script:PublicDataRoot = Join-Path $env:LOCALAPPDATA 'NuistElectricityQuery'
 $script:PublicConfigPath = Join-Path $script:PublicDataRoot 'config.json'
@@ -128,8 +128,7 @@ function Get-DormBalance {
 
 function Show-QuerySettings {
     if ($Demo) {
-        [void][Windows.MessageBox]::Show('Demo mode uses fictional data and never loads saved credentials. Start without -Demo to configure your own authorized query.','NUIST Demo')
-        return $false
+        return Show-LowBalanceSettings
     }
     Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase
     [xml]$settingsXaml=@'
@@ -141,6 +140,7 @@ function Show-QuerySettings {
 <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="24">
 <TextBlock Text="&#x5357;&#x4EAC;&#x4FE1;&#x606F;&#x5DE5;&#x7A0B;&#x5927;&#x5B66;&#x7535;&#x8D39;&#x67E5;&#x8BE2;" FontSize="21" FontWeight="SemiBold" Margin="0,0,0,12"/>
 <TextBlock Text="&#x4EC5;&#x586B;&#x5199;&#x672C;&#x4EBA;&#x5DF2;&#x6388;&#x6743;&#x7684;&#x5B98;&#x65B9;&#x8BF7;&#x6C42;&#x53C2;&#x6570;&#x3002;&#x8BE6;&#x89C1; docs/METHOD.md&#x3002;" TextWrapping="Wrap" Margin="0,0,0,14"/>
+<Button x:Name="ReminderSettingsButton" Content="&#x4F4E;&#x7535;&#x91CF;&#x63D0;&#x9192;&#x8BBE;&#x7F6E;&#xFF08;&#x9632;&#x6B62;&#x6B20;&#x8D39;&#x505C;&#x7535;&#xFF09;" Height="40" Margin="0,0,0,16" Background="#5EEAD4" Foreground="#102524" FontSize="14"/>
 <TextBlock Text="&#x623F;&#x95F4;&#x663E;&#x793A;&#x540D;&#x79F0;"/><TextBox x:Name="DisplayName"/>
 <TextBlock Text="feeitemid"/><TextBox x:Name="FeeItem"/>
 <TextBlock Text="type"/><TextBox x:Name="QueryType" Text="IEC"/>
@@ -156,6 +156,7 @@ function Show-QuerySettings {
 '@
     $reader=New-Object Xml.XmlNodeReader $settingsXaml
     $dialog=[Windows.Markup.XamlReader]::Load($reader)
+    $dialog.FindName('ReminderSettingsButton').Add_Click({[void](Show-LowBalanceSettings -Owner $dialog)})
     $fieldMap=@{feeitemid='FeeItem';type='QueryType';level='Level';xiaoqu_id='Campus';loudong_id='Building';room_id='Room'}
     if ($null-ne $script:PublicConfiguration) {
         $dialog.FindName('DisplayName').Text=[string]$script:PublicConfiguration.displayName
@@ -181,6 +182,6 @@ function Show-QuerySettings {
         catch { [void][Windows.MessageBox]::Show($_.Exception.Message,'Settings') }
     })
     $saved=$dialog.ShowDialog()
-    if ($saved) { Initialize-PublicQuery }
+    if ($saved) { Initialize-PublicQuery; Initialize-ReminderSettings }
     return [bool]$saved
 }

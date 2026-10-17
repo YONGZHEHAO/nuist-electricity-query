@@ -6,6 +6,8 @@ config.local.*
 credentials.dat
 session.dat
 history.csv
+reminders.json
+reminder-state.json
 *.log
 *.har
 *.pdb
