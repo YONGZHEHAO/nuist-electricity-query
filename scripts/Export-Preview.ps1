@@ -1,9 +1,10 @@
 # Render the real WPF controls with fictional fixtures. No screen capture,
 # user settings, credentials, network request or private history is involved.
+param([string]$OutputDirectory = '', [switch]$ShowTransparency)
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase,System.Xaml
 $root=Split-Path $PSScriptRoot
-$output=Join-Path $root 'docs\images'
+$output=if ($OutputDirectory) { $OutputDirectory } else { Join-Path $root 'docs\images' }
 [void][IO.Directory]::CreateDirectory($output)
 $source=[IO.File]::ReadAllText((Join-Path $root 'src\PowerBalance.ps1'))
 $alerts=[IO.File]::ReadAllText((Join-Path $root 'src\Alerts.ps1'))
@@ -45,6 +46,28 @@ $minuteScaleButton.Background=$brushConverter.ConvertFromString('#2A5EEAD4')
 $minuteScaleButton.Foreground=$brushConverter.ConvertFromString('#E7FFFB')
 $window.Left=-20000;$window.Top=0
 function Save-PreviewPng($Visual,[int]$Width,[int]$Height,[string]$Name){
+    if ($ShowTransparency -and $Name -ne 'reminder-settings.png') {
+        # Use synthetic color bands to make the widget's translucency visible.
+        $margin=32
+        $bounds=[Windows.Rect]::new(0,0,$Width+2*$margin,$Height+2*$margin)
+        $sceneBrush=[Windows.Media.LinearGradientBrush]::new()
+        $sceneBrush.StartPoint=[Windows.Point]::new(0,0.10)
+        $sceneBrush.EndPoint=[Windows.Point]::new(0.92,1)
+        $sceneBrush.GradientStops.Add([Windows.Media.GradientStop]::new([Windows.Media.Color]::FromRgb(23,57,80),0))
+        $sceneBrush.GradientStops.Add([Windows.Media.GradientStop]::new([Windows.Media.Color]::FromRgb(50,129,132),0.34))
+        $sceneBrush.GradientStops.Add([Windows.Media.GradientStop]::new([Windows.Media.Color]::FromRgb(18,34,56),0.65))
+        $sceneBrush.GradientStops.Add([Windows.Media.GradientStop]::new([Windows.Media.Color]::FromRgb(109,83,145),1))
+        $composite=[Windows.Media.DrawingVisual]::new()
+        $drawing=$composite.RenderOpen()
+        try {
+            $drawing.DrawRectangle($sceneBrush,$null,$bounds)
+            $drawing.DrawRectangle([Windows.Media.VisualBrush]::new($Visual),$null,[Windows.Rect]::new($margin,$margin,$Width,$Height))
+        }
+        finally { $drawing.Close() }
+        $Visual=$composite
+        $Width=[int]$bounds.Width
+        $Height=[int]$bounds.Height
+    }
     $bitmap=New-Object Windows.Media.Imaging.RenderTargetBitmap($Width,$Height,96,96,[Windows.Media.PixelFormats]::Pbgra32)
     $bitmap.Render($Visual)
     $encoder=New-Object Windows.Media.Imaging.PngBitmapEncoder
@@ -69,6 +92,7 @@ try{
     $window.Width=286;$window.Height=78
     $layoutViewport.Visibility='Collapsed';$compactSection.Visibility='Visible'
     Reset-CompactTypography;Update-CompactBalance
+    $compactBalanceText.Foreground=$balanceText.Foreground
     $compactStatusDot.Fill=$brushConverter.ConvertFromString('#FBBF24')
     $window.UpdateLayout()
     Save-PreviewPng $window.Content 286 78 'desktop-compact.png'

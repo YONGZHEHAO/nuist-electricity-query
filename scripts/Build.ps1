@@ -1,8 +1,8 @@
-param([string]$Version='0.2.0')
+param([string]$Version='0.3.0',[string]$OutputDirectory='')
 $ErrorActionPreference='Stop'
 if($Version-notmatch '^\d+\.\d+\.\d+$'){throw 'Use a semantic version such as 0.1.0.'}
 $root=Split-Path $PSScriptRoot
-$dist=Join-Path $root 'dist'
+$dist=if($OutputDirectory){$OutputDirectory}else{Join-Path $root 'dist'}
 $package=Join-Path $dist ('NUIST-Electricity-v'+$Version+'-windows-x64')
 if(Test-Path -LiteralPath $package){throw 'Package already exists. Move the old package before rebuilding.'}
 [void][IO.Directory]::CreateDirectory($package)

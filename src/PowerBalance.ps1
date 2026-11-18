@@ -486,18 +486,37 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
         ShowInTaskbar="False" Title="Power Balance" FontFamily="Segoe UI"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
     <Window.Resources>
+        <LinearGradientBrush x:Key="GlassInsetFill" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#21D5EEFF" Offset="0"/>
+            <GradientStop Color="#120C1829" Offset="0.52"/>
+            <GradientStop Color="#229BAFD8" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GlassInsetEdge" StartPoint="0,0" EndPoint="0.7,1">
+            <GradientStop Color="#52D5EEFF" Offset="0"/>
+            <GradientStop Color="#15CDE3FF" Offset="0.55"/>
+            <GradientStop Color="#35ABBFEC" Offset="1"/>
+        </LinearGradientBrush>
+        <Style x:Key="GlassStatStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource GlassInsetFill}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource GlassInsetEdge}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="TextElement.Foreground" Value="#A8B9D0"/>
+        </Style>
         <Style x:Key="HeaderButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="32"/>
             <Setter Property="Height" Value="32"/>
             <Setter Property="Foreground" Value="#B8C5D9"/>
-            <Setter Property="Background" Value="#12FFFFFF"/>
+            <Setter Property="Background" Value="{StaticResource GlassInsetFill}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontSize" Value="17"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}" CornerRadius="10" BorderBrush="#22FFFFFF" BorderThickness="1">
+                        <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}" CornerRadius="10" BorderBrush="{StaticResource GlassInsetEdge}" BorderThickness="1">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -516,7 +535,7 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
         <Style x:Key="RangeButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="34"/>
             <Setter Property="Margin" Value="3,0"/>
-            <Setter Property="Foreground" Value="#75849A"/>
+            <Setter Property="Foreground" Value="#A8B9D0"/>
             <Setter Property="Background" Value="#0DFFFFFF"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontSize" Value="12"/>
@@ -580,33 +599,52 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
         <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="8" CornerRadius="0" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
     <Grid>
-    <Border x:Name="GlassSurface" CornerRadius="26" BorderBrush="#26FFFFFF" BorderThickness="1">
+    <Border x:Name="GlassSurface" CornerRadius="26" BorderThickness="1">
+        <Border.BorderBrush>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0.82,1">
+                <GradientStop Color="#A2EDFAFF" Offset="0"/>
+                <GradientStop Color="#519DD8F3" Offset="0.31"/>
+                <GradientStop Color="#2589A5CE" Offset="0.63"/>
+                <GradientStop Color="#AFAFC7FF" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#F3162031" Offset="0"/>
-                <GradientStop Color="#F00B111D" Offset="0.55"/>
-                <GradientStop Color="#F314182A" Offset="1"/>
+                <GradientStop Color="#C51D3B50" Offset="0"/>
+                <GradientStop Color="#E0091527" Offset="0.49"/>
+                <GradientStop Color="#C62B2649" Offset="1"/>
             </LinearGradientBrush>
         </Border.Background>
         <Grid>
-            <Border x:Name="GlassGlowLayer" CornerRadius="26" IsHitTestVisible="False" Opacity="0.58">
+            <Border x:Name="GlassGlowLayer" CornerRadius="25" IsHitTestVisible="False" Opacity="0.42">
                 <Border.Background>
-                    <RadialGradientBrush x:Name="GlassGlowBrush" Center="0.18,0.10" GradientOrigin="0.18,0.10" RadiusX="0.72" RadiusY="0.60">
-                        <GradientStop Color="#365EEAD4" Offset="0"/>
-                        <GradientStop Color="#1267E8F9" Offset="0.38"/>
-                        <GradientStop Color="#00000000" Offset="1"/>
+                    <RadialGradientBrush x:Name="GlassGlowBrush" Center="0.18,0.10" GradientOrigin="0.18,0.10" RadiusX="0.58" RadiusY="0.53">
+                        <GradientStop Color="#569CEBFF" Offset="0"/>
+                        <GradientStop Color="#28A2B8FC" Offset="0.41"/>
+                        <GradientStop Color="#009CEBFF" Offset="1"/>
                     </RadialGradientBrush>
                 </Border.Background>
             </Border>
-            <Border x:Name="GlassSheenLayer" CornerRadius="26" IsHitTestVisible="False" Opacity="0.42">
-                <Border.Background>
-                    <LinearGradientBrush x:Name="GlassSheenBrush" StartPoint="-0.35,-0.15" EndPoint="0.75,0.85">
-                        <GradientStop Color="#00FFFFFF" Offset="0"/>
-                        <GradientStop Color="#24FFFFFF" Offset="0.46"/>
-                        <GradientStop Color="#05FFFFFF" Offset="0.54"/>
-                        <GradientStop Color="#00000000" Offset="1"/>
+            <Border CornerRadius="25" BorderThickness="5" IsHitTestVisible="False">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0.08,0" EndPoint="0.88,1">
+                        <GradientStop Color="#41ECF9FF" Offset="0"/>
+                        <GradientStop Color="#0CF0F9FF" Offset="0.4"/>
+                        <GradientStop Color="#23030A18" Offset="0.69"/>
+                        <GradientStop Color="#31A2AAFC" Offset="1"/>
                     </LinearGradientBrush>
-                </Border.Background>
+                </Border.BorderBrush>
+            </Border>
+            <Border Margin="5" CornerRadius="20" BorderBrush="{StaticResource GlassInsetEdge}" BorderThickness="1" Opacity="0.48" IsHitTestVisible="False"/>
+            <Border x:Name="GlassSheenLayer" CornerRadius="25" BorderThickness="4" IsHitTestVisible="False" Opacity="0.30">
+                <Border.BorderBrush>
+                    <LinearGradientBrush x:Name="GlassSheenBrush" StartPoint="-0.32,-0.24" EndPoint="0.72,0.58">
+                        <GradientStop Color="#00DBF5FF" Offset="0"/>
+                        <GradientStop Color="#B2EDFAFF" Offset="0.47"/>
+                        <GradientStop Color="#356DE3FF" Offset="0.62"/>
+                        <GradientStop Color="#00A4B9FF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
             </Border>
             <ScrollViewer x:Name="LayoutViewport" Margin="22,18,22,18" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False" PanningMode="VerticalOnly">
             <Grid x:Name="LayoutGrid">
@@ -649,7 +687,7 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
                         <TextBlock Text=" &#x5EA6;" Foreground="#8291A8" FontSize="17" VerticalAlignment="Bottom" Margin="0,0,0,9"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,-2,0,0">
-                        <TextBlock Text="&#x533A;&#x95F4;&#x53D8;&#x5316;" Foreground="#6E7C91" FontSize="10"/>
+                        <TextBlock Text="&#x533A;&#x95F4;&#x53D8;&#x5316;" Foreground="#ACBCD1" FontSize="10"/>
                         <TextBlock x:Name="BalanceDeltaText" Text=" --" Foreground="#8EA0B8" FontSize="10" FontWeight="SemiBold"/>
                     </StackPanel>
                 </StackPanel>
@@ -666,7 +704,7 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
                     </Grid>
                 </Border>
 
-                <Border x:Name="ChartSection" Grid.Row="3" Background="#12FFFFFF" BorderBrush="#28FFFFFF" BorderThickness="1" CornerRadius="17" Margin="0,4,0,10" Padding="13,10,13,7">
+                <Border x:Name="ChartSection" Grid.Row="3" Background="{StaticResource GlassInsetFill}" BorderBrush="{StaticResource GlassInsetEdge}" BorderThickness="1" CornerRadius="17" Margin="0,4,0,10" Padding="13,10,13,7">
                     <Border.Effect><DropShadowEffect Color="#020617" BlurRadius="16" ShadowDepth="3" Opacity="0.28"/></Border.Effect>
                     <Grid>
                         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
@@ -675,7 +713,7 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
                             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                             <StackPanel x:Name="ChartHeading">
                                 <TextBlock Text="&#x7535;&#x91CF;&#x8D8B;&#x52BF;" Foreground="#E2EAF5" FontSize="12" FontWeight="SemiBold"/>
-                                <TextBlock x:Name="PeriodText" Text="Today" Foreground="#607086" FontSize="9" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock x:Name="PeriodText" Text="Today" Foreground="#A8B9D0" FontSize="9" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                             <StackPanel x:Name="ChartActions" Grid.Column="1" HorizontalAlignment="Right">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -685,7 +723,7 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
                                     <Button x:Name="ChartResetButton" Content="&#x25CE;" ToolTip="&#x67E5;&#x770B;&#x5168;&#x90E8;" Style="{StaticResource ChartZoomButtonStyle}"/>
                                     <Button x:Name="ChartZoomInButton" Content="+" ToolTip="&#x653E;&#x5927;" Style="{StaticResource ChartZoomButtonStyle}"/>
                                 </StackPanel>
-                                <TextBlock x:Name="ChartRangeText" Text="Waiting for data" Foreground="#718198" FontSize="8" HorizontalAlignment="Right" Margin="0,2,1,0" ToolTip="&#x6EDA;&#x8F6E;&#x7F29;&#x653E; &#x00B7; &#x62D6;&#x52A8;&#x5E73;&#x79FB; &#x00B7; &#x53CC;&#x51FB;&#x590D;&#x4F4D;"/>
+                                <TextBlock x:Name="ChartRangeText" Text="Waiting for data" Foreground="#A8B9D0" FontSize="8" HorizontalAlignment="Right" Margin="0,2,1,0" ToolTip="&#x6EDA;&#x8F6E;&#x7F29;&#x653E; &#x00B7; &#x62D6;&#x52A8;&#x5E73;&#x79FB; &#x00B7; &#x53CC;&#x51FB;&#x590D;&#x4F4D;"/>
                             </StackPanel>
                         </Grid>
                         <Canvas x:Name="ChartCanvas" Grid.Row="1" MinHeight="60" Margin="0,5,0,0" ClipToBounds="True" Cursor="Hand" ToolTip="&#x6EDA;&#x8F6E;&#x7F29;&#x653E; &#x00B7; &#x62D6;&#x52A8;&#x5E73;&#x79FB; &#x00B7; &#x53CC;&#x51FB;&#x590D;&#x4F4D;"/>
@@ -695,17 +733,17 @@ Add-Type -Path (Join-Path $PSScriptRoot 'PowerBalance.Motion.cs') -ReferencedAss
                 <Grid x:Name="StatsSection" Grid.Row="4" Margin="-4,-1,-4,5">
                     <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                    <Border Grid.Row="0" Grid.Column="0" Background="#0FFFFFFF" BorderBrush="#20FFFFFF" BorderThickness="1" CornerRadius="14" Margin="4" Padding="12,8">
-                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x7D2F;&#x8BA1;&#x7528;&#x7535;" Foreground="#69798F" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="ConsumedText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassStatStyle}">
+                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x7D2F;&#x8BA1;&#x7528;&#x7535;" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="ConsumedText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
                     </Border>
-                    <Border Grid.Row="0" Grid.Column="1" Background="#0FFFFFFF" BorderBrush="#20FFFFFF" BorderThickness="1" CornerRadius="14" Margin="4" Padding="12,8">
-                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x65E5;&#x5747;&#x7528;&#x7535;" Foreground="#69798F" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="DailyAverageText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassStatStyle}">
+                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x65E5;&#x5747;&#x7528;&#x7535;" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="DailyAverageText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
                     </Border>
-                    <Border Grid.Row="1" Grid.Column="0" Background="#0FFFFFFF" BorderBrush="#20FFFFFF" BorderThickness="1" CornerRadius="14" Margin="4" Padding="12,8">
-                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x6B63;&#x5411;&#x7535;&#x91CF;&#x53D8;&#x5316;" Foreground="#69798F" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="RechargedText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassStatStyle}">
+                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x6B63;&#x5411;&#x7535;&#x91CF;&#x53D8;&#x5316;" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="RechargedText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
                     </Border>
-                    <Border Grid.Row="1" Grid.Column="1" Background="#0FFFFFFF" BorderBrush="#20FFFFFF" BorderThickness="1" CornerRadius="14" Margin="4" Padding="12,8">
-                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x9884;&#x8BA1;&#x53EF;&#x7528;" Foreground="#69798F" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="EstimatedDaysText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassStatStyle}">
+                        <StackPanel VerticalAlignment="Center"><TextBlock Text="&#x9884;&#x8BA1;&#x53EF;&#x7528;" FontSize="9"/><Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Left"><TextBlock x:Name="EstimatedDaysText" Text="--" Foreground="#EEF5FF" FontSize="15" FontWeight="SemiBold" Margin="0,2,0,0"/></Viewbox></StackPanel>
                     </Border>
                 </Grid>
 
@@ -845,7 +883,6 @@ $script:GlassCurrentY = 0.10
 $script:GlassTargetX = 0.18
 $script:GlassTargetY = 0.10
 $script:GlassPointerInside = $false
-$script:GlassIdleTicks = 0
 $rangeButtonMap = @{
     day   = $dayRangeButton
     week  = $weekRangeButton
@@ -950,7 +987,6 @@ function Complete-FoldTransition {
     Complete-WidgetGeometryEditing
     if ($script:PendingBalanceRefresh) { $deferredBalanceTimer.Start() }
     if ($script:GlassPointerInside -or $script:GlassWasRunning) {
-        $script:GlassIdleTicks = 0
         $glassMotionTimer.Start()
     }
     $script:GlassWasRunning = $false
@@ -1527,7 +1563,7 @@ function Set-SelectedRange {
     Reset-ChartViewport
     foreach ($entry in $rangeButtonMap.GetEnumerator()) {
         $entry.Value.Background = $brushConverter.ConvertFromString('#0DFFFFFF')
-        $entry.Value.Foreground = $brushConverter.ConvertFromString('#75849A')
+        $entry.Value.Foreground = $brushConverter.ConvertFromString('#A8B9D0')
     }
     $rangeButtonMap[$Range].Background = $brushConverter.ConvertFromString('#2A5EEAD4')
     $rangeButtonMap[$Range].Foreground = $brushConverter.ConvertFromString('#E7FFFB')
@@ -1542,7 +1578,7 @@ function Set-ChartGranularity {
     Reset-ChartViewport
     foreach ($entry in $scaleButtonMap.GetEnumerator()) {
         $entry.Value.Background = $brushConverter.ConvertFromString('#0DFFFFFF')
-        $entry.Value.Foreground = $brushConverter.ConvertFromString('#75849A')
+        $entry.Value.Foreground = $brushConverter.ConvertFromString('#A8B9D0')
     }
     $scaleButtonMap[$Granularity].Background = $brushConverter.ConvertFromString('#2A5EEAD4')
     $scaleButtonMap[$Granularity].Foreground = $brushConverter.ConvertFromString('#E7FFFB')
@@ -1788,16 +1824,15 @@ $glassMotionTimer.Add_Tick({
     $glassGlowBrush.GradientOrigin = [Windows.Point]::new($script:GlassCurrentX, $script:GlassCurrentY)
     $glassSheenBrush.StartPoint = [Windows.Point]::new($script:GlassCurrentX - 0.50, $script:GlassCurrentY - 0.34)
     $glassSheenBrush.EndPoint = [Windows.Point]::new($script:GlassCurrentX + 0.54, $script:GlassCurrentY + 0.48)
-    $targetOpacity = if ($script:GlassPointerInside) { 0.70 } else { 0.46 }
+    $targetOpacity = if ($script:GlassPointerInside) { 0.75 } else { 0.42 }
     $glassGlowLayer.Opacity += ($targetOpacity - $glassGlowLayer.Opacity) * 0.14
     $glassSheenLayer.Opacity += (($targetOpacity * 0.68) - $glassSheenLayer.Opacity) * 0.14
-    if (-not $script:GlassPointerInside) {
-        $script:GlassIdleTicks++
-        if ($script:GlassIdleTicks -gt 80 -and
-            [Math]::Abs($script:GlassCurrentX - $script:GlassTargetX) -lt 0.002 -and
-            [Math]::Abs($script:GlassCurrentY - $script:GlassTargetY) -lt 0.002) {
-            $glassMotionTimer.Stop()
-        }
+    # Stop repainting when the highlight has settled, even if the pointer is still inside.
+    if ([Math]::Abs($script:GlassCurrentX - $script:GlassTargetX) -lt 0.002 -and
+        [Math]::Abs($script:GlassCurrentY - $script:GlassTargetY) -lt 0.002 -and
+        [Math]::Abs($glassGlowLayer.Opacity - $targetOpacity) -lt 0.003 -and
+        [Math]::Abs($glassSheenLayer.Opacity - ($targetOpacity * 0.68)) -lt 0.003) {
+        $glassMotionTimer.Stop()
     }
 })
 
@@ -1809,14 +1844,12 @@ $window.Add_MouseMove({
     $script:GlassTargetX = [Math]::Max(0.0, [Math]::Min(1.0, $point.X / $window.ActualWidth))
     $script:GlassTargetY = [Math]::Max(0.0, [Math]::Min(1.0, $point.Y / $window.ActualHeight))
     $script:GlassPointerInside = $true
-    $script:GlassIdleTicks = 0
     if ($null -eq $script:FoldAnimation -and -not $script:WidgetGeometryEditing -and -not $glassMotionTimer.IsEnabled) { $glassMotionTimer.Start() }
 })
 $window.Add_MouseLeave({
     $script:GlassPointerInside = $false
     $script:GlassTargetX = 0.18
     $script:GlassTargetY = 0.10
-    $script:GlassIdleTicks = 0
     if ($null -eq $script:FoldAnimation -and -not $script:WidgetGeometryEditing -and -not $glassMotionTimer.IsEnabled) { $glassMotionTimer.Start() }
 })
 
@@ -1972,7 +2005,6 @@ function Complete-WidgetGeometryEditing {
         }
         if ($script:PendingBalanceRefresh) { $deferredBalanceTimer.Start() }
         if ($script:GeometryGlassWasRunning -or $script:GlassPointerInside) {
-            $script:GlassIdleTicks = 0
             $glassMotionTimer.Start()
         }
         $script:GeometryGlassWasRunning = $false
